@@ -48,3 +48,10 @@ return (
 ```
 
 **More on [useQuery](<[useQuery](https://react-query.tanstack.com/reference/useQuery)>)**
+
+## isFetching vs isLoading
+
+- isFetching
+  - the async query function hasn't yet resolved
+- isLoading
+  - no cached data, plus `isFetching`
