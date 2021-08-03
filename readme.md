@@ -103,3 +103,59 @@ const { data, error, isError, isLoading } = useQuery("posts", fetchPosts, {
     - how long it's been since the last active `useQuery`
   - after the cache expires, the data is garbage collected
   - cache is backup data to display while fetching
+
+### Why some data doesn't refresh?
+
+- Data for queries with known keys only re-fetched upon trigger
+- Example triggers:
+  - component remount
+  - window refocus
+  - running refetch function
+  - automated refetch
+  - query invalidation after a mutation
+- To fix this, it's possible to pass an array for the query, not only a string
+- Treat the query as a dependency array `['comments', post.id]`
+
+## Pre-fetching
+
+- adds data to cache
+- automatically state (configurable)
+- shows while re-fetching
+  - as long as cache hasn't expired
+- pre-fetching can be used for any anticipated data needs
+  - not just pagination
+
+```jsx
+import { useEffect, useState } from "react";
+
+import { useQuery, useQueryClient } from "react-query";
+
+export function Posts() {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // the query client is necessary to pre-fetch data
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // condition to pre-fetch data
+    if (currentPage < maxPostPage) {
+      const nextPage = currentPage + 1;
+      queryClient.prefetchQuery(["posts", nextPage], () =>
+        fetchPosts(nextPage)
+      );
+    }
+  }, [currentPage, queryClient]);
+
+  const { data } = useQuery(
+    ["posts", currentPage],
+    () => fetchPosts(currentPage),
+    {
+      staleTime: 2000,
+      // keep data in cache
+      keepPreviousData: true,
+    }
+  );
+}
+```
+
+**More on [Pre-fetching](https://react-query.tanstack.com/guides/prefetching)**
