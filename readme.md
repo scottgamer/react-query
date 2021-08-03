@@ -8,7 +8,7 @@ This describes the basics on how to use the [React Query Library](https://react-
 - Create query client:
   - manages queries and cache
 
-```javascript
+```jsx
 import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
@@ -26,7 +26,7 @@ export default App;
 - Run `useQuery`
   - hook to query the server
 
-```javascript
+```jsx
 import { useQuery } from "react-query";
 
 async function fetchPosts() {
@@ -55,3 +55,51 @@ return (
   - the async query function hasn't yet resolved
 - isLoading
   - no cached data, plus `isFetching`
+
+## React Query Dev Tools
+
+- Shows queries (by key)
+  - status of queries
+  - last updated timestamp
+- Data explorer
+- Query explorer
+- To add the `react query dev tools`:
+
+```jsx
+// App component
+import { ReactQueryDevtools } from "react-query/devtools";
+return (
+  <>
+    ...
+    <ReactQueryDevtools />
+  </>
+);
+```
+
+**More on [React Query Dev Tools](https://react-query.tanstack.com/devtools)**
+
+## Stale Data
+
+- Data refetch only triggers for stale data
+  - component remounts, window refocus
+  - `staleTime` translates to "max age"
+  - how to tolerate data potentially being out of date
+- You can add the `staleTime` in the `options` object of `useQuery`
+
+```javascript
+const { data, error, isError, isLoading } = useQuery("posts", fetchPosts, {
+  staleTime: 2000,
+});
+```
+
+- The default `staleTime` is `0` to always have updated data
+
+### staleTime vs cacheTime
+
+- `staleTime` is for re-fetching
+- `cache` is for data that might be re-used later
+  - query goes into "cold storage" if there's no active `useQuery`
+  - cache data expires after `cacheTime` (default: five minutes)
+    - how long it's been since the last active `useQuery`
+  - after the cache expires, the data is garbage collected
+  - cache is backup data to display while fetching
