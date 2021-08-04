@@ -159,3 +159,18 @@ export function Posts() {
 ```
 
 **More on [Pre-fetching](https://react-query.tanstack.com/guides/prefetching)**
+
+## Mutations
+
+- Making a network call that changes data on the server
+  - Optimistic updates (assume change will happen)
+  - Update react query cache with data returned from the server
+  - Trigger re-fetch of relevant data (invalidation)
+- `useMutation`
+  - similar to `useQuery`
+  - returns a `mutate` function
+  - doesn't need a query key
+  - `isLoading` but no `isFetching`
+  - by default, no retries (configurable)
+
+**More on [Mutations](https://react-query.tanstack.com/guides/mutations)**
