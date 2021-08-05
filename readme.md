@@ -174,3 +174,41 @@ export function Posts() {
   - by default, no retries (configurable)
 
 **More on [Mutations](https://react-query.tanstack.com/guides/mutations)**
+
+## Infinite Queries
+
+- `useInfiniteQuery`
+- Requires different API format than pagination
+- Tracks next query
+  - next query is returned as part of the data
+- Data object has 2 properties:
+  - `pages`
+  - `pageParams` tracks the keys of queries that have been retrieved (not commonly used)
+- Every query has its own element in the pages array
+- Current value of `pageParam` is maintained by react query
+- `useInfiniteQuery` options:
+  - `getNextPageParam`: (lastPage, allPages)
+    - updates `pageParam`
+    - might use all of the pages of data (allPages)
+    - `lastPage` works as a `next` property
+  - `fetchNextPage`
+    - function to call when the user needs more data
+  - `hasNextPage`
+    - based on return value of `getNextPageParam`
+    - if `undefined`, no more data
+  - `isFetchingNextPage`
+    - for displaying loading spinner
+    - difference between `isFetching` & `isFetchingNextPage`
+
+### Data Flow
+
+- Component mounts: `data: undefined`
+- Component mounts -> Fetch first page: `data: undefined & pageParam: default`
+
+```javascript
+
+```
+
+- After component mounts and data fetched: `data.pages[0]: {...} & update pageParamZ`
+- `hasNExtPage`? -> `fetchNextPage`
+- No more pages? -> `pageParam: undefined & hasNextPage: false`
