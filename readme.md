@@ -204,11 +204,6 @@ export function Posts() {
 
 - Component mounts: `data: undefined`
 - Component mounts -> Fetch first page: `data: undefined & pageParam: default`
-
-```javascript
-
-```
-
 - After component mounts and data fetched: `data.pages[0]: {...} & update pageParamZ`
 - `hasNExtPage`? -> `fetchNextPage`
 - No more pages? -> `pageParam: undefined & hasNextPage: false`
