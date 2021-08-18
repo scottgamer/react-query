@@ -279,3 +279,17 @@ export function useTreatments(): Treatment[] {
 ```
 
 **Read more on [Custom hooks](https://react-query.tanstack.com/examples/custom-hooks)**
+
+### useIsFetching
+
+- In smaller apps:
+
+  - used **isFetching** from **useQuery** return object
+  - **isLoading** is **isFetching** plus no cached data
+
+- In larger apps:
+
+  - loading spinner whenever any query **isFetching**
+  - **useIsFetching** helps in this case
+
+- No need for **isFetching** on every custom hook / useQuery call
