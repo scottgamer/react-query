@@ -1,5 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { ReactElement } from 'react';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import { theme } from '../../theme';
 import { Loading } from './Loading';
@@ -12,6 +13,7 @@ export function App(): ReactElement {
       <Navbar />
       <Loading />
       <Routes />
+      <ReactQueryDevtools />
     </ChakraProvider>
   );
 }
