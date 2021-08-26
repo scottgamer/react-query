@@ -293,3 +293,49 @@ export function useTreatments(): Treatment[] {
   - **useIsFetching** helps in this case
 
 - No need for **isFetching** on every custom hook / useQuery call
+
+### Default onError option
+
+- No `useError` analogy for `useFetching`
+  - not a boolean: unclear how to implement
+- Instead, set default `onError` handler for queryClient
+
+```javascript
+{
+  queries: { useQuery options },
+  mutations: { useMutation options }
+}
+```
+
+- It's possible to pass a default error handler to the query client constructor
+  - this will handle all errors inside the query provider
+
+```typescript
+export function queryErrorHandler(error: unknown): void {
+  const id = "react-query-error";
+  const title =
+    error instanceof Error
+      ? error.toString().replace(/^Error:\s*/, "")
+      : "Error connecting to server";
+
+  toast.closeAll();
+  toast({ id, title, status: "error", variant: "subtle", isClosable: true });
+}
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      onError: queryErrorHandler,
+    },
+  },
+});
+```
+
+- Then use the queryClient without any optional parameters
+
+```typescript
+export function useTreatments(): Treatment[] {
+  const { data = [] } = useQuery(queryKeys.treatments, getTreatments);
+  return data;
+}
+```
