@@ -339,3 +339,21 @@ export function useTreatments(): Treatment[] {
   return data;
 }
 ```
+
+## Why doesn't data refresh?
+
+- using the same key for every query
+- nothing to trigger refetch
+  - component remount
+  - window refocus
+  - running refetch function manually
+  - automated refetch
+- **use keys for every change!**
+  - treat keys a dependency array
+
+```typescript
+const { data: appointments = fallback } = useQuery(
+  [queryKeys.appointments, monthYear.year, monthYear.month],
+  () => getAppointments(monthYear.year, monthYear.month)
+);
+```
