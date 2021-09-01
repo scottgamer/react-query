@@ -357,3 +357,22 @@ const { data: appointments = fallback } = useQuery(
   () => getAppointments(monthYear.year, monthYear.month)
 );
 ```
+
+## Data pre-fetching
+
+- data can be pre-fetched using the `useQueryClient` hook and the `prefetchQuery` method
+
+```typescript
+import { useQuery, useQueryClient } from "react-query";
+
+// prefetch next month when monthYear changes
+const queryClient = useQueryClient();
+useEffect(() => {
+  // assume increment of one month
+  const nextMonthYear = getNewMonthYear(monthYear, 1);
+  queryClient.prefetchQuery(
+    [queryKeys.appointments, nextMonthYear.year, nextMonthYear.month],
+    () => getAppointments(nextMonthYear.year, nextMonthYear.month)
+  );
+}, [queryClient, monthYear]);
+```
