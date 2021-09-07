@@ -376,3 +376,15 @@ useEffect(() => {
   );
 }, [queryClient, monthYear]);
 ```
+
+## The Select Option
+
+- it allows to filter out data from `useQuery`
+- react query memoizes data to reduce unnecessary computation
+- tech details:
+  - triple equals `"==="` comparison of `select` function
+  - only runs if data changes and the function has changed
+- need a stable function (`useCallback` for anonymous function)
+- **Select is not an option for pre-fetch!**
+
+**More on [Data Transformation](https://tkdodo.eu/blog/react-query-data-transformations)**
