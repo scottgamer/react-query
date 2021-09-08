@@ -379,12 +379,39 @@ useEffect(() => {
 
 ## The Select Option
 
+- transform or select a part of the data returned by the query function
 - it allows to filter out data from `useQuery`
 - react query memoizes data to reduce unnecessary computation
 - tech details:
   - triple equals `"==="` comparison of `select` function
   - only runs if data changes and the function has changed
 - need a stable function (`useCallback` for anonymous function)
+- `useCallback` will also improve the performance of the caching method
 - **Select is not an option for pre-fetch!**
 
 **More on [Data Transformation](https://tkdodo.eu/blog/react-query-data-transformations)**
+
+```typescript
+// imports...
+
+async function getStaff(): Promise<Staff[]> {
+  const { data } = await axiosInstance.get("/staff");
+  return data;
+}
+
+export function useStaff(): UseStaff {
+  const [filter, setFilter] = useState("all");
+  const selectFn = useCallback(
+    (unfilteredStaff) => filterByTreatment(unfilteredStaff, filter),
+    [filter]
+  );
+
+  const fallback = [];
+  // use of the select property to apply filter to cached data
+  const { data: staff = fallback } = useQuery(queryKeys.staff, getStaff, {
+    select: filter !== "all" ? selectFn : undefined,
+  });
+
+  return { staff, filter, setFilter };
+}
+```
