@@ -415,3 +415,59 @@ export function useStaff(): UseStaff {
   return { staff, filter, setFilter };
 }
 ```
+
+## Refetching
+
+- re-fetch ensures stale data gets updated from server
+  - leave page and refocus
+- stale queries are re-fetched automatically in the background when:
+  - new instance of the query mount
+  - every time a react component using react query mounts
+  - the window is refocused
+  - the network is reconnected
+  - configured `refetchInterval` has expired
+    - automatic `polling`
+
+### How?
+
+- global or query-specific options:
+  - `refetchOnMount`, `refetchOnWindowFocus`
+  - `refetchOnReconnect`, `refetchInterval`
+
+### Suppressing re-fetch
+
+- increase stale time
+- turn off refetchOnMount / refetchOnWindowFocus / refetchOnReconnect
+- only for very rarely changed, not mission-critical data
+- suppressing the refetch can be done in each individual query client or in the global query client
+
+```typescript
+export function useTreatments(): Treatment[] {
+  const { data = [] } = useQuery(queryKeys.treatments, getTreatments, {
+    staleTime: 600000, // 10 minutes
+    cacheTime: 900000, // 15 minutes (doesn't make sense for staleTime to exceed cacheTime)
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  return data;
+}
+```
+
+```typescript
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      onError: queryErrorHandler,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+```
+
+## Polling / Auto re-fetching
+
