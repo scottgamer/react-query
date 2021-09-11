@@ -23,6 +23,11 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       onError: queryErrorHandler,
+      staleTime: 10 * 60 * 1000,
+      cacheTime: 15 * 60 * 1000,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
     },
   },
 });
