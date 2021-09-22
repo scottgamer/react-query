@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from 'react-query';
 
 import type { User } from '../../../../../shared/types';
 import { axiosInstance, getJWTHeader } from '../../../axiosInstance';
@@ -9,13 +10,13 @@ import {
   setStoredUser,
 } from '../../../user-storage';
 
-// async function getUser(user: User | null): Promise<User | null> {
-//   if (!user) return null;
-//   const { data } = await axiosInstance.get(`/user/${user.id}`, {
-//     headers: getJWTHeader(user),
-//   });
-//   return data.user;
-// }
+async function getUser(user: User | null): Promise<User | null> {
+  if (!user) return null;
+  const { data } = await axiosInstance.get(`/user/${user.id}`, {
+    headers: getJWTHeader(user),
+  });
+  return data.user;
+}
 
 interface UseUser {
   user: User | null;
@@ -26,7 +27,11 @@ interface UseUser {
 export function useUser(): UseUser {
   const [user, setUser] = useState<User | null>(getStoredUser());
 
-  // TODO: call useQuery to update user data from server
+  // call useQuery to update user data from server
+  useQuery(queryKeys.user, () => getUser(user), {
+    enabled: !!user,
+    onSuccess: (data) => setUser(data),
+  });
 
   // meant to be called from useAuth
   function updateUser(newUser: User): void {
