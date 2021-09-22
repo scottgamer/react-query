@@ -105,7 +105,7 @@ export function useAppointments(): UseAppointments {
     () => getAppointments(monthYear.year, monthYear.month),
     {
       select: showAll ? undefined : selectFn,
-      onError: queryErrorHandler,
+      // onError: queryErrorHandler,
       ...commonOptions,
       refetchOnMount: true,
       refetchOnReconnect: true,
