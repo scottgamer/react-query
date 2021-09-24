@@ -11,6 +11,7 @@ import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
 import { queryKeys } from '../../../react-query/constants';
+import { queryErrorHandler } from '../../../react-query/queryClient';
 import { useUser } from '../../user/hooks/useUser';
 import { AppointmentDateMap } from '../types';
 import { getAvailableAppointments } from '../utils';
@@ -105,7 +106,7 @@ export function useAppointments(): UseAppointments {
     () => getAppointments(monthYear.year, monthYear.month),
     {
       select: showAll ? undefined : selectFn,
-      // onError: queryErrorHandler,
+      onError: queryErrorHandler,
       ...commonOptions,
       refetchOnMount: true,
       refetchOnReconnect: true,
