@@ -469,5 +469,69 @@ export const queryClient = new QueryClient({
 });
 ```
 
-## Polling / Auto re-fetching
+## Authentication
 
+### Dependent queries
+
+- dependent queries
+
+## Caching values for logged in users
+
+- without a provider, no persistence across `useUser` calls
+- react query acting as a provider for auth
+- use `queryClient.setQueryData`
+- add to `updateUser` and `clearUser`
+
+```typescript
+import { useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
+import { queryKeys } from "../../../react-query/constants";
+import {
+  clearStoredUser,
+  getStoredUser,
+  setStoredUser,
+} from "../../../user-storage";
+
+async function getUser(user: User | null): Promise<User | null> {
+  if (!user) return null;
+  const { data } = await axiosInstance.get(`/user/${user.id}`, {
+    headers: getJWTHeader(user),
+  });
+  return data.user;
+}
+
+export function useUser(): UseUser {
+  const [user, setUser] = useState<User | null>(getStoredUser());
+  const queryClient = useQueryClient();
+
+  // call useQuery to update user data from server
+  useQuery(queryKeys.user, () => getUser(user), {
+    enabled: !!user,
+    onSuccess: (data) => setUser(data),
+  });
+
+  // meant to be called from useAuth
+  function updateUser(newUser: User): void {
+    // set user in state
+    setUser(newUser);
+    // update user in localstorage
+    setStoredUser(newUser);
+    // pre-populate user profile in React Query client
+    queryClient.setQueryData(queryKeys.user, newUser);
+  }
+
+  // meant to be called from useAuth
+  function clearUser() {
+    // update state
+    setUser(null);
+    // remove from localstorage
+    clearStoredUser();
+    // reset user to null in query client
+    queryClient.setQueryData(queryKeys.user, null);
+  }
+
+  return { user, updateUser, clearUser };
+}
+```
+
+- in this case, after the user data has been fetched, it is set to the query client using the `setQueryData` method
