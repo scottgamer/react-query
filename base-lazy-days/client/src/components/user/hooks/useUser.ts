@@ -56,6 +56,9 @@ export function useUser(): UseUser {
 
     // reset user to null in query client
     queryClient.setQueryData(queryKeys.user, null);
+
+    // remove user appointments query
+    queryClient.removeQueries('user-appointments');
   }
 
   return { user, updateUser, clearUser };
