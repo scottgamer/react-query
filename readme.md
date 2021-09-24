@@ -544,3 +544,38 @@ export function useUser(): UseUser {
   - `user` state initially set by `updateUser` called by auth `signin`
   - can't query server if we don;t have a user ID!
   - can't remove query because query writes to user state
+
+## Mutations - Global Fetching/Error
+
+- invalidate query on mutation so data is purged from the cache
+- update cache with data returned from the server after mutation
+- optimistic update (assume mutation will succeed, rollback if not)
+- errors:
+  - set `onError` callback in `mutations` property of query client `defaultOptions`
+- loading:
+  - `useIsMutating` is analogous to `useIsFetching`
+  - update `Loading` component to show on `isMutating`
+
+### Set up mutations
+
+- to start using mutations we need to setup our `queryClient`
+
+```typescript
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    ...
+    mutations: {
+      onError: queryErrorHandler,
+    },
+  },
+});
+```
+
+- then, we can use the `useIsMutating` hook to have a global indicator
+
+```typescript
+import { useIsFetching, useIsMutating } from "react-query";
+
+const isMutating = useIsMutating();
+const display = isFetching || isMutating ? "inherit" : "none";
+```
