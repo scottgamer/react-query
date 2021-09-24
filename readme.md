@@ -535,3 +535,12 @@ export function useUser(): UseUser {
 ```
 
 - in this case, after the user data has been fetched, it is set to the query client using the `setQueryData` method
+
+- `useQuery` caches user data and refreshes from server
+  - refreshing from server will be important for mutations
+- `useUser` manages user data in query cache and `localStorage`
+  - set query cache using `setQueryData` on sign in / sign out
+- user `useQuery` dependent on `user` state being truthy
+  - `user` state initially set by `updateUser` called by auth `signin`
+  - can't query server if we don;t have a user ID!
+  - can't remove query because query writes to user state
