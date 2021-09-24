@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
+import { useQuery } from 'react-query';
 
 import type { Appointment, User } from '../../../../../shared/types';
 import { axiosInstance, getJWTHeader } from '../../../axiosInstance';
-import { mockUserAppointments } from '../../../mocks/mockData';
 import { queryKeys } from '../../../react-query/constants';
 import { useUser } from './useUser';
 
@@ -18,6 +18,16 @@ async function getUserAppointments(
 }
 
 export function useUserAppointments(): Appointment[] {
-  // TODO replace with React Query
-  return mockUserAppointments;
+  const { user } = useUser();
+
+  const fallback: Appointment[] = [];
+  const { data: userAppointments = fallback } = useQuery(
+    'user-appointments',
+    () => getUserAppointments(user),
+    {
+      enabled: !!user,
+    },
+  );
+
+  return userAppointments;
 }
