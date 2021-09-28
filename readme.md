@@ -579,3 +579,47 @@ import { useIsFetching, useIsMutating } from "react-query";
 const isMutating = useIsMutating();
 const display = isFetching || isMutating ? "inherit" : "none";
 ```
+
+- use `useMutation` to update data in the server
+- very similar to `useQuery`
+- differences:
+  - no cache data
+  - no retries
+  - no refetch
+  - no `isLoading` vs `isFetching`
+  - returns `mutate` function which actually runs mutation
+  - `onMutate` callback (useful for optimistic queries)
+
+## Fixing typescript problems
+
+- type for returning `mutate` function from custom hook
+
+```typescript
+import { UseMutateFunction, useMutation } from "react-query";
+
+export function useReserveAppointment(): UseMutateFunction<
+  void,
+  unknown,
+  Appointment,
+  unknown
+> {
+  const { user } = useUser();
+
+  const { mutate } = useMutation((appointment: Appointment) =>
+    setAppointmentUser(appointment, user?.id)
+  );
+
+  return mutate;
+}
+```
+
+## Query Invalidation
+
+- invalidate appointments cache data on mutation
+  - so users don't have to refresh the page
+- `invalidateQueries` effects:
+  - marks query as stale
+  - triggers re-fetch if query currently being rendered
+- `mutate` > `onSuccess` > `invalidateQueries` > `re-fetch`
+
+**More on [query invalidation](https://react-query.tanstack.com/guides/query-invalidation)**
