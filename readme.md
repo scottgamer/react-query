@@ -623,3 +623,27 @@ export function useReserveAppointment(): UseMutateFunction<
 - `mutate` > `onSuccess` > `invalidateQueries` > `re-fetch`
 
 **More on [query invalidation](https://react-query.tanstack.com/guides/query-invalidation)**
+
+```typescript
+const { mutate } = useMutation(
+  (appointment: Appointment) => setAppointmentUser(appointment, user?.id),
+  {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.appointments]);
+      toast({
+        title: "You have reserved the appointment!",
+        status: "success",
+      });
+    },
+  }
+);
+
+return mutate;
+```
+
+## Query key prefixes
+
+- `invalidateQueries` takes a query key `prefix`
+  - invalidate all related queries at once
+  - can make it exact with `{exact: true}` option
+  - other queryClient methods take prefix too (like `removeQueries`)
