@@ -647,3 +647,10 @@ return mutate;
   - invalidate all related queries at once
   - can make it exact with `{exact: true}` option
   - other queryClient methods take prefix too (like `removeQueries`)
+
+## Updates from mutation response
+
+- update query cache with results from mutation server call
+- will update query cache and `localStorage`
+
+**More on [updates from mutation responses](https://react-query.tanstack.com/guides/updates-from-mutation-responses)**
