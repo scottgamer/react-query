@@ -654,3 +654,42 @@ return mutate;
 - will update query cache and `localStorage`
 
 **More on [updates from mutation responses](https://react-query.tanstack.com/guides/updates-from-mutation-responses)**
+
+## Optimistic Updates
+
+- update cache before response from server
+- "optimistic" that the mutation will work
+  - cache gets updated quicker
+  - especially useful if lots of components rely on it
+  - what if the server update fails?
+
+## Rollback / Cancel Query
+
+- `useMutation` has `onMutate` callback
+  - returns context value that's handed to `onError` for rollback
+  - context value contains previous cache data
+- `onMutate` function can also cancel re-fetches-in-progress
+  - don't want to overwrite optimistic update with old data from server!
+
+**More on [optimistic updates](https://react-query.tanstack.com/guides/optimistic-updates)**
+
+### How it works?
+
+- user triggers update with `mutate`
+- send update to server
+- `onMutate`
+  - cancel queries in progress
+  - update query cache
+  - save previous cache value
+- on success?
+  - invalidate query
+- on error?
+  - uses context to roll back cache
+  - invalidate query
+
+## Making a Query `Cancel-able`
+
+- in order to cancel from react query, query function must:
+  - return a promise with a `cancel` property that cancels query
+
+**More on [query cancellation](https://react-query.tanstack.com/guides/query-cancellation)**
